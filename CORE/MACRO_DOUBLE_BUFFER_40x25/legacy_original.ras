@@ -1,0 +1,31 @@
+// Extracto del motor precursor MOTOR CON SID VICIOUS ok.
+// Estado: LEGACY_PASS. Aún no portable.
+
+screen_active : byte = 0;
+screen_d018_real : byte = $18;
+screen_d018_mask : byte = $1A;
+
+procedure CambiarBufferPantalla();
+begin
+    asm("
+        lda screen_active
+        beq switch_screen_to_b
+        lda #$00
+        sta screen_active
+        lda #$18
+        sta screen_d018_real
+        lda #$1A
+        sta screen_d018_mask
+        jmp switch_screen_apply
+switch_screen_to_b:
+        lda #$01
+        sta screen_active
+        lda #$C8
+        sta screen_d018_real
+        lda #$CA
+        sta screen_d018_mask
+switch_screen_apply:
+        lda screen_d018_real
+        sta $D018
+    ");
+end;
